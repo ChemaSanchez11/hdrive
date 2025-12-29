@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Drive estilo Windows 11</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css">
+
+    <style>
+        body{
+            margin:0;
+            height:100vh;
+            background:linear-gradient(120deg,#0f2027,#203a43,#2c5364);
+            font-family:"Segoe UI",system-ui;
+            overflow:hidden;
+        }
+        #desktop{height:calc(100vh - 60px);padding:20px;}
+        .icon{
+            width:90px;text-align:center;color:white;cursor:pointer;
+            margin-bottom:20px;user-select:none;
+        }
+        .icon:hover{background:rgba(255,255,255,.15);border-radius:8px;}
+        .icon span{display:block;margin-top:6px;font-size:14px;}
+        .window{
+            position:absolute;top:80px;left:150px;
+            width:600px;height:400px;
+            background:rgba(255,255,255,.85);
+            backdrop-filter:blur(20px);
+            border-radius:12px;
+            box-shadow:0 20px 50px rgba(0,0,0,.35);
+            display:none;overflow:hidden;z-index:10;
+        }
+        .titlebar{
+            height:40px;background:rgba(240,240,240,.9);
+            display:flex;align-items:center;justify-content:space-between;
+            padding:0 10px;cursor:move;font-weight:500;
+        }
+        .window-content{padding:15px;height:calc(100% - 40px);overflow:auto;}
+        #taskbar{
+            position:fixed;bottom:0;width:100%;height:60px;
+            background:rgba(30,30,30,.85);
+            backdrop-filter:blur(20px);
+            display:flex;justify-content:center;align-items:center;gap:20px;
+        }
+        .task-icon{
+            width:40px;height:40px;background:rgba(255,255,255,.15);
+            border-radius:10px;display:flex;
+            align-items:center;justify-content:center;
+            color:white;cursor:pointer;font-size:18px;
+        }
+        .task-icon:hover{background:rgba(255,255,255,.3);}
+        .file{padding:10px;border-radius:8px;cursor:pointer;}
+        .file:hover{background:rgba(0,0,0,.05);}
+    </style>
+</head>
+
+<body>
+
+<!-- ESCRITORIO -->
+<div id="desktop">
+    <div class="icon" ondblclick="openDrive('/')">📁<span>Mi Drive</span></div>
+    <div class="icon" ondblclick="openDrive('/proyectos')">📁<span>Proyectos</span></div>
+    <div class="icon" ondblclick="openDrive('/imagenes')">📁<span>Imágenes</span></div>
+    <div class="icon" ondblclick="openFile('notas.txt')">📄<span>notas.txt</span></div>
+    <div class="icon" ondblclick="openFile('tareas.docx')">📄<span>tareas.docx</span></div>
+</div>
+
+<!-- EXPLORADOR -->
+<div class="window" id="explorer">
+    <div class="titlebar">
+        <span id="path">Mi Drive</span>
+        <button class="btn btn-sm btn-light" onclick="closeWindow('#explorer')">✖</button>
+    </div>
+    <div class="window-content" id="files"></div>
+</div>
+
+<!-- VISOR DE ARCHIVOS -->
+<div class="window" id="viewer" style="width:500px;height:300px;">
+    <div class="titlebar">
+        <span id="fileName">Archivo</span>
+        <button class="btn btn-sm btn-light" onclick="closeWindow('#viewer')">✖</button>
+    </div>
+    <div class="window-content" id="fileContent">
+        <p>Contenido del archivo...</p>
+    </div>
+</div>
+
+<!-- USUARIOS -->
+<div class="window" id="users" style="left:220px;top:120px;">
+    <div class="titlebar">
+        <span>Usuarios</span>
+        <button class="btn btn-sm btn-light" onclick="closeWindow('#users')">✖</button>
+    </div>
+    <div class="window-content">
+        <ul class="list-group">
+            <li class="list-group-item d-flex justify-content-between">admin <span class="badge bg-success">Activo</span></li>
+            <li class="list-group-item d-flex justify-content-between">chema <span class="badge bg-secondary">Invitado</span></li>
+            <li class="list-group-item d-flex justify-content-between">backup <span class="badge bg-warning">Sistema</span></li>
+        </ul>
+    </div>
+</div>
+
+<!-- DISCO -->
+<div class="window" id="disk" style="left:300px;top:160px;">
+    <div class="titlebar">
+        <span>Administrador de disco</span>
+        <button class="btn btn-sm btn-light" onclick="closeWindow('#disk')">✖</button>
+    </div>
+    <div class="window-content">
+        <p><strong>Espacio usado</strong></p>
+        <div class="progress mb-3">
+            <div class="progress-bar bg-info" style="width:65%">65%</div>
+        </div>
+        <ul class="list-group">
+            <li class="list-group-item d-flex justify-content-between">Documentos <span>4.2 GB</span></li>
+            <li class="list-group-item d-flex justify-content-between">Imágenes <span>2.1 GB</span></li>
+            <li class="list-group-item d-flex justify-content-between">Vídeos <span>6.7 GB</span></li>
+        </ul>
+    </div>
+</div>
+
+<!-- TASKBAR -->
+<div id="taskbar">
+    <div class="task-icon" onclick="openDrive('/')">🗂️</div>
+    <div class="task-icon" onclick="openWindow('#users')">👤</div>
+    <div class="task-icon" onclick="openWindow('#disk')">💽</div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+<script src="https://code.jquery.com/ui/1.13.2/jquery-ui.min.js"></script>
+
+<script>
+    let zIndex = 20;
+    let currentPath = '/';
+
+    const fs = {
+        '/': [
+            {type:'folder',name:'Proyectos',path:'/proyectos'},
+            {type:'folder',name:'Imágenes',path:'/imagenes'},
+            {type:'file',name:'informe.pdf'},
+            {type:'file',name:'contrato.docx'}
+        ],
+        '/proyectos': [
+            {type:'file',name:'app.js'},
+            {type:'file',name:'diseño.fig'},
+            {type:'file',name:'README.md'}
+        ],
+        '/imagenes': [
+            {type:'file',name:'foto1.png'},
+            {type:'file',name:'banner.jpg'}
+        ]
+    };
+
+    const desktopFiles = {
+        'notas.txt':'Estas son mis notas de ejemplo...',
+        'tareas.docx':'Lista de tareas pendientes...'
+    };
+
+    function openDrive(path){
+        currentPath = path;
+        $('#path').text('Mi Drive ' + path);
+        renderFiles();
+        openWindow('#explorer');
+    }
+
+    function renderFiles(){
+        const container = $('#files');
+        container.empty();
+
+        if(currentPath !== '/'){
+            container.append(`<div class="file" onclick="openDrive('/')">⬅️ Volver</div>`);
+        }
+
+        fs[currentPath].forEach(item=>{
+            if(item.type==='folder'){
+                container.append(`<div class="file" onclick="openDrive('${item.path}')">📁 ${item.name}</div>`);
+            }else{
+                container.append(`<div class="file" onclick="openFile('${item.name}')">📄 ${item.name}</div>`);
+            }
+        });
+    }
+
+    function openFile(name){
+        let content = desktopFiles[name] || "Contenido simulado del archivo " + name;
+        $('#fileName').text(name);
+        $('#fileContent').html('<pre>'+content+'</pre>');
+        openWindow('#viewer');
+    }
+
+    function openWindow(sel){
+        $(sel).show().css('z-index',++zIndex);
+    }
+    function closeWindow(sel){$(sel).hide();}
+
+    $(function(){
+        $('.window').draggable({
+            handle:'.titlebar',
+            containment:'body',
+            start:function(){$(this).css('z-index',++zIndex);}
+        });
+    });
+</script>
+
+</body>
+</html>
