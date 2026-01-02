@@ -1,0 +1,9 @@
+RewriteEngine On
+RewriteBase /clockup/
+
+# Si la solicitud es un archivo o directorio existente, no hacer nada
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+
+# Redirigir todo lo demás a index.php
+RewriteRule ^(.*)$ index.php [QSA,L]

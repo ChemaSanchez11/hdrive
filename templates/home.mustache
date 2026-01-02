@@ -1,0 +1,65 @@
+<!-- ESCRITORIO -->
+<div id="desktop">
+    <!-- Aquí JS inyectará carpetas y archivos raíz -->
+</div>
+
+<!-- EXPLORADOR -->
+<div class="window" id="explorer">
+    <div class="titlebar">
+        <span id="path">Mi Drive</span>
+        <button class="btn btn-sm btn-light" onclick="closeWindow('#explorer')">✖</button>
+    </div>
+    <div class="window-content" id="files"></div>
+</div>
+
+<!-- VISOR DE ARCHIVOS -->
+<div class="window" id="viewer" style="width: 100%; max-width: 500px">
+    <div class="titlebar">
+        <span id="fileName">Archivo</span>
+        <button class="btn btn-sm btn-light" onclick="closeWindow('#viewer')">✖</button>
+    </div>
+    <div class="window-content" id="fileContent">
+        <p>Contenido del archivo...</p>
+    </div>
+</div>
+
+<!-- USUARIOS -->
+<div class="window" id="users" style="left:220px;top:120px;">
+    <div class="titlebar">
+        <span>Usuarios</span>
+        <button class="btn btn-sm btn-light" onclick="closeWindow('#users')">✖</button>
+    </div>
+    <div class="window-content">
+        <ul class="list-group">
+            <li class="list-group-item d-flex justify-content-between">admin <span class="badge bg-success">Activo</span></li>
+            <li class="list-group-item d-flex justify-content-between">chema <span class="badge bg-secondary">Invitado</span></li>
+            <li class="list-group-item d-flex justify-content-between">backup <span class="badge bg-warning">Sistema</span></li>
+        </ul>
+    </div>
+</div>
+
+<!-- DISCO -->
+<div class="window" id="disk" style="left:300px;top:160px;">
+    <div class="titlebar">
+        <span>Administrador de disco</span>
+        <button class="btn btn-sm btn-light" onclick="closeWindow('#disk')">✖</button>
+    </div>
+    <div class="window-content">
+        <p><strong>Espacio usado</strong></p>
+        <div class="progress mb-3">
+            <div class="progress-bar bg-info" style="width:65%">65%</div>
+        </div>
+        <ul class="list-group">
+            <li class="list-group-item d-flex justify-content-between">Documentos <span>4.2 GB</span></li>
+            <li class="list-group-item d-flex justify-content-between">Imágenes <span>2.1 GB</span></li>
+            <li class="list-group-item d-flex justify-content-between">Vídeos <span>6.7 GB</span></li>
+        </ul>
+    </div>
+</div>
+
+<!-- TASKBAR -->
+<div id="taskbar">
+    <div class="task-icon" onclick="openDrive('/')">🗂️</div>
+    <div class="task-icon" onclick="openWindow('#users')">👤</div>
+    <div class="task-icon" onclick="openWindow('#disk')">💽</div>
+</div>

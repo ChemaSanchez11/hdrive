@@ -1,0 +1,28 @@
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>HDrive | {{title}}</title>
+
+    <!-- Favicon -->
+    <link rel="icon" href="/mp-repository{{#asset}}/images/favicon-192x192.png" type="image/x-icon">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="{{#asset}}/css/bootstrap.min.css{{/asset}}">
+    <link rel="stylesheet" href="{{#asset}}/css/jquery-ui.css{{/asset}}">
+
+    <!-- jQuery -->
+    <script src="{{#asset}}/js/jquery-3.7.1.min.js{{/asset}}"></script>
+    <script src="{{#asset}}/js/jquery-ui.min.js{{/asset}}"></script>
+
+    <script src="https://code.iconify.design/3/3.1.0/iconify.min.js{{/asset}}"></script>
+
+    <!-- CSS -->
+    {{#styles}}
+        <link rel="stylesheet" href="{{#asset}}/css/{{.}}.css{{/asset}}">
+    {{/styles}}
+
+    {{#js}}
+        <script src="{{#asset}}/js/{{.}}.js{{/asset}}"></script>
+    {{/js}}
+</head>
